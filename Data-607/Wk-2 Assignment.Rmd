@@ -1,0 +1,121 @@
+---
+title: "Assignment Wk-2"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: hide
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Assignment Description
+The purpose of the assigment is to create a movie table on a cloud database and retrieve the data from R code.
+Create text file consisting of movie names and the ratings with the related attributes. Once created, load the data into a online cloud mySQL database and query the table in the R code and display the results
+
+
+## R packages used
+
+1. tidyr
+2. dplyr
+3. DT
+4. RMySQL
+5. DBI
+
+
+```{r}
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(DT))
+suppressMessages(library(RMySQL))
+suppressMessages(library(DBI))
+```
+
+## Raw movie file on .csv format
+
+The file contains list of Netflix movies with different ratings. The file is updated on GitHub here 
+
+
+ (https://raw.githubusercontent.com/DataScienceAR/silver-octo-funicular/master/Netflix%20Shows.csv)
+
+
+```{r}
+theurl <- url('https://raw.githubusercontent.com/DataScienceAR/silver-octo-funicular/master/Netflix%20Shows.csv')
+movies.df <- tbl_df(read.csv(theurl))
+datatable(head(movies.df,3))
+```
+
+
+
+## Creating Movie database and tables on Google Cloud
+
+A new "Movie" database and tables are created in Google Cloud. The .csv files available on GitHub is used a source to feed the table creation.
+Two tables are created under "Movie" Database.
+Calling the SQL in R
+
+```{r}
+con <- dbConnect(RMySQL::MySQL(),
+                 dbname = "Movies",
+                 host = "34.73.184.91",
+                 port = 3306,
+                 user = "Ruser",
+                 password = "Ruser"
+                 
+              
+                 
+                 )
+
+```
+### Querring the list of table in the "Movie" database
+
+```{r}
+dbListTables(con)
+```
+### Querring the "NetflixShows" table for top 5 rows
+
+```{r}
+dbGetQuery(con,"select * from `NetflixShows` limit 5 ")
+```
+
+### Get the list of observations that have user rating score greater than 97
+
+```{r}
+datatable(dbGetQuery(con,"SELECT
+	nt.title `Movie Name`,
+	nt.rating `Rating`,
+	nt.ratingLevel `Rating Level`,
+	nt.ratingDescription,
+	nt.`release year` `Release Year` 
+FROM
+	`NetflixShows` nt 
+	WHERE `user rating score` >97"))
+```
+### Get the count of movies by year that are more than 1 in count.
+
+```{r}
+dbGetQuery(con,"SELECT
+	
+		nt.`release year` `Release Year` ,
+	COUNT(DISTINCT nt.title) `Movie Name`
+FROM
+	`NetflixShows` nt 
+	WHERE `user rating score` >90
+
+
+	GROUP BY 	
+	
+	nt.`release year` 
+	HAVING COUNT(DISTINCT nt.title) >1
+	ORDER BY
+	`release year` DESC")
+```
+
+
+
