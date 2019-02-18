@@ -1,0 +1,134 @@
+---
+title: "Assignment Wk-3"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: hide
+
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+## R packages used
+
+1. stringr
+
+
+```{r}
+suppressMessages(library(stringr))
+
+```
+
+# Question 3 Raw Data
+
+Copy the introductory example. The vector name stores the extracted names. R> name [1] “Moe Szyslak” “Burns, C. Montgomery” “Rev. Timothy Lovejoy” [4] “Ned Flanders” “Simpson, Homer” “Dr. Julius Hibbert”
+
+
+```{r}
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+Extracted.names <- unlist(str_extract_all(raw.data, "[[:alpha:]., ]{2,}"))
+Extracted.names
+```
+
+
+
+## Question 3.1
+Use the tools of this chapter to rearrange the vector so that all elements conform to the standard first_name last_name.
+Stringr was used to combine steps into a single line of code.
+
+```{r}
+Std.FullName<-str_trim(sub("([^,]+),([^,]+)","\\2 \\1", sub("[[:alpha:].]{1,3}\\. ","",Extracted.names)))
+Std.FullName
+
+```
+## Question 3.2
+Construct a logical vector indicating whether a character has a title (i.e., Rev. and Dr.)
+
+```{r}
+Title<-str_detect(Extracted.names,"[[:alpha:].]{2,3}\\. ")
+cbind(Extracted.names,Title)
+```
+## Question 3.3
+Construct a logical vector indicating whether a character has a second name.
+```{r}
+MiddleName<-str_detect(Extracted.names," [[:alpha:].]{1}\\. ")
+cbind(Extracted.names,MiddleName)
+```
+
+# Question 4
+Describe the types of strings that conform to the following regular expressions and
+construct an example that is matched by the regular expression.
+
+## Question 4.1  - String containing '$' symbols
+[0-9]+\\$
+
+```{r}
+str4.1 <- c("$4","$40","4$","40$30","30$","56 $")
+str_detect(str4.1,'[0-9]+\\$')
+```
+## Question 4.2  - String of words containing length 1 -4 
+\\b[a-z]{1,4}\\b  
+
+```{r}
+str4.2 <- c("four times four sixteen","aim high"," t ",'attt')
+str_detect(str4.2,'\\b[a-z]{1,4}\\b')
+```
+
+## Question 4.3  - String with file name ending in .txt
+.*?\\.txt$ 
+
+```{r}
+str4.3 <- c("File Format.txt","String Manipulation using stringR.txt","books.html","filename.php")
+str_detect(str4.3,'.*?\\.txt$')
+```
+
+## Question 4.4  - String with a date format in the form of MM/DD/YYYY or DD/MM/YYYY
+\\d{2}/\\d{2}/\\d{4}
+
+```{r}
+str4.4 <- c("01/22/2019","22/01/2019")
+
+str_detect(str4.4,"\\d{2}/\\d{2}/\\d{4}")
+```
+## Question 4.5  - String with html tags
+<(.+?)>.+?</\\1>
+
+```{r}
+str4.5 <- c("<p>Some HTML</p>","<p>Hello, <b>World</b>")
+str_detect(str4.5,"<(.+?)>.+?</\\1>")
+```
+# Question 9  - Bonus Question
+
+The following code hides a secret message. Crack it with R and regular expressions.
+Hint: Some of the characters are more revealing than others! The code snippet is also
+available in the materials at www.r-datacollection.com.
+```{r}
+str9 <-"clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0Tanwo
+Uwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigO
+d6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5
+fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr"
+
+str_replace_all(str9,"([a-z])|([0-9])|\n","")
+```
+
+
+
+
+
+
+
+
+
+
+
