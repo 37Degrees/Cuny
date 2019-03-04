@@ -1,0 +1,185 @@
+---
+title: "Assignment Wk-5 - Data Cleansing"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: hide
+
+---
+![](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/dplyr.jpg)
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Assignment Description
+Tidying up the flights raw dataset which will be imported from mySQL database on Google Cloud platform.
+
+Some observations about the source dataset
+
+1. Variable names are missing for Flight names and type of delay
+2. Table is wider
+3. There are empty rows in between
+
+
+![](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Airline%20Time.jpg)
+
+
+## R packages used
+
+1. tidyr
+2. dplyr
+3. DT
+4. RMySQL
+5. DBI
+
+
+```{r}
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(DT))
+suppressMessages(library(RMySQL))
+suppressMessages(library(DBI))
+suppressMessages(library(stringr))
+```
+
+## Raw  file in .csv format
+
+The file is uploaded on GitHub here 
+
+
+ (https://raw.githubusercontent.com/DataScienceAR/silver-octo-funicular/master/Netflix%20Shows.csv)
+
+
+```{r}
+theurl <- url('https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Airlines_Time.csv')
+airlines.df <- tbl_df(read.csv(theurl))
+datatable(head(airlines.df,3))
+```
+
+
+
+## Creating Flights tables on Google Cloud
+
+A new "Flights" table is created in Google Cloud. The .csv files available on GitHub is used a source to feed the table creation.
+
+Calling the SQL in R
+
+```{r}
+
+
+con <- dbConnect(RMySQL::MySQL(),
+                 dbname ="flight",
+                  host = "34.73.184.91",
+                 port = 3306,
+                 user = "Ruser",
+                 password = "Ruser" )
+
+```
+## Querring the list of table in the "flights" database
+
+```{r}
+dbListTables(con)
+```
+## Querring the "Airlines_Time" table for top 5 rows
+
+```{r}
+dbGetQuery(con,"select * from `Airlines_Time` limit 5 ")
+
+untidy_dataset <- dbGetQuery(con,"select * from `Airlines_Time` ")
+datatable(untidy_dataset)
+```
+
+## Cleaning the untidy dataset.
+
+(@) Step 1: Adding the column names to 1st and 2nd variables
+(@) Step 2: Adding the column names to 1st and 2nd variables
+(@) Step 3: Adding rowID to each row
+(@) Step 4: collapsing Cities variable names into a column City values
+(@) Step 5: spreading the Time Category variable values into variable names
+(@) Step 6: Remove the 1st variabe named rowid
+(@) Step 7: Replacing the "NA" with 0 for time under variables "delayed" and "on time"
+(@) Step 8: Replacing "NA" with the corresponding Airline names
+
+
+
+#### Step 1: Adding the column names to 1st and 2nd variables
+
+```{r}
+names(untidy_dataset)[c(1,2)] <- c("Airlines","Time_Category")
+names(untidy_dataset)
+```
+#### Step 2: Adding the column names to 1st and 2nd variables
+
+```{r}
+untidy_dataset_step1 <-untidy_dataset[-c(1,4),]
+datatable(untidy_dataset_step1)
+
+```
+
+#### Step 3: Adding rowID to each row
+
+```{r}
+untidy_dataset_step2<- tibble::rowid_to_column(untidy_dataset_step1,var = "rowid")
+datatable(untidy_dataset_step2)
+```
+
+#### Step 4: collapsing Cities variable names into a column City values
+
+```{r}
+
+untidy_dataset_step3<- gather(untidy_dataset_step2,key ="City",value = "Time",c("Los Angeles" ,"Phoenix","San Diego"  ,"San Francisco" ,"Seattle" ),na.rm = FALSE)
+datatable(untidy_dataset_step3)
+```
+#### Step 5: spreading the Time Category variable values into variable names
+```{r}
+
+untidy_dataset_step4<- spread(untidy_dataset_step3,Time_Category,Time)
+datatable(untidy_dataset_step4)
+```
+#### Step 6: Remove the 1st variabe named rowid
+
+```{r}
+
+untidy_dataset_step5<- untidy_dataset_step4[,-1]
+datatable(untidy_dataset_step5)
+```
+#### Step 7: Replacing the "NA" with 0 for time under variables "delayed" and "on time"
+
+```{r}
+missing_delayed <- is.na(untidy_dataset_step5$delayed)
+missing_delayed
+ untidy_dataset_step5$delayed[missing_delayed] <- 0
+
+
+datatable(untidy_dataset_step5)
+
+
+```
+
+#### Step 8: Replacing "NA" with the corresponding Airline names
+
+```{r}
+
+
+
+missing_on_time <- is.na(untidy_dataset_step5$`on time` )
+ untidy_dataset_step5$`on time`[missing_on_time] <- 0
+untidy_dataset_step5$Airlines[c(6:10,16:20)] <- c("ALASKA","AM WEST")
+#untidy_dataset_step5$Airlines[16:20] <- 
+datatable(untidy_dataset_step5,options = list(pageLength = 20, initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+    "}")))
+
+
+```
+
+
+
+
