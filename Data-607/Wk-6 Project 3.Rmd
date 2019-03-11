@@ -1,0 +1,112 @@
+---
+title: "Assignment Wk-6 - Data Cleansing & Analysis DataSet 1
+"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: hide
+   
+   
+    
+
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+***
+### Overview {.tabset .tabset-fade .tabset.-pills}
+The dataset is related to color and heat absorption science experiment. 
+The Experiment is defined below in experimenters own words.
+In the experience theromometers are place on 5 different color t-shirts and recorded the temperature at 10 minutes intervals for 1 hour as the clothes are exposed to heat. The heater was then turned off, and the temperatures measured again at 10 minute intervals as the garments cooled. The attached table represent our findings. This data can be used to analyze the rate at which different colors absorb and release heat.
+
+
+
+***
+#### R Packages Used
+
+This assignment was accomplished by utilizing these packages for both data analysis and visualizations.
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library("tidyr")
+library("dplyr")
+library("kableExtra")
+library("ggplot2")
+library("stringr")
+```
+***
+#### The DataSet
+
+The data is captured in the .csv format and updated into GitHub. You will see below that the data is not in a very clean form to conduct analysis easily, therefore this data set needed to be tidy.
+
+```{r}
+theURL <- "https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/science%20proj%20data.csv"
+untidyraw1 <- data.frame(read.csv(file = theURL, header = TRUE, sep = ","))
+#Table Structure
+glimpse(untidyraw1)
+
+#Top 6 rows of the table
+head(untidyraw1)
+```
+***
+
+### Data Manipulation {.tabset .tabset-fade .tabset.-pills}
+The data needs to be cleaned and manipulated for it to be presentable for analysis.
+
+***
+
+#### Cleaning the table
+
+* Transposing the wide table to a longer one 
+```{r}
+
+tidy1 <- gather(untidyraw1,"Time Interval","Minutes",-color,-phase)
+
+# Change column name
+
+
+ names(tidy1)[1] <- "T-shirt_Color"
+tidy1$phase<- str_replace_all(tidy1$phase,"C","Cooling")
+tidy1$phase<- str_replace_all(tidy1$phase,"H","Heating")
+head(tidy1)
+
+
+```
+
+***
+
+#### Analysis
+```{r}
+total_by_color_phase<- tidy1 %>% group_by(`T-shirt_Color`) %>% summarise(sum=sum(Minutes)) %>% arrange(desc(sum))
+total_by_color_phase
+
+# Distribution of Minutes
+
+hist(tidy1$Minutes,main = "Distribution of Minutes",xlab = "Minutes")
+pie(total_by_color_phase$sum, labels = total_by_color_phase$`T-shirt_Color`)
+
+
+
+```
+
+***
+
+
+
+
+
+
+
+
+
+
+
+
+

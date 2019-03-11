@@ -1,0 +1,175 @@
+---
+title: "Project 2- Data Cleansing & Analysis DataSet 2
+"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    highlight: tango
+    Collapsed: false
+    code_folding: show
+   
+    
+   
+   
+    
+
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+***
+### Overview {.tabset .tabset-fade .tabset.-pills}
+The dataset is annual estimates of the resident population from April 1, 2010 to July 1, 2018.
+The estimates are based on the 2010 Census and reflect changes to the April 1, 2010 population due to the Count Question Resolution program and geographic program revisions. See Geographic Terms and Definitions at 
+
+[link]http://www.census.gov/programs-surveys/popest/guidance-geographies/terms-and-definitions.html for a list of the states that are included in each region and division. All geographic boundaries for the 2018 population estimates series except statistical area delineations are as of January 1, 2018.  For population estimates methodology 
+
+
+
+
+***
+#### R Packages Used
+
+This assignment was accomplished by utilizing these packages for both data analysis and visualizations.
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+library("tidyr")
+library("dplyr")
+library("kableExtra")
+library("ggplot2")
+library("stringr")
+library("lubridate")
+
+
+
+```
+***
+#### The DataSet
+
+The data is captured in the .csv format and updated into GitHub. You will see below that the data is not in a very clean form to conduct analysis easily, therefore this data set needed to be tidy.
+
+```{r}
+theURL <- "https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/nst-est2018-01.csv"
+RawFile <-data.frame(read.csv(file = theURL,header = TRUE,stringsAsFactors = FALSE))
+
+#Table Structure
+glimpse(RawFile)
+
+
+
+
+```
+***
+
+### Data Manipulation {.tabset .tabset-fade .tabset.-pills}
+The data needs to be cleansed and manipulated for it to be presentable for analysis. 
+
+***
+
+#### Untidy DataSet
+
+* Showing top 6 rows
+```{r}
+# 
+head(RawFile)
+
+
+
+
+
+```
+
+***
+
+#### Cleansing the data
+
+* Subsetting the data with required columns
+```{r}
+# 
+subset_db_1 <- RawFile %>% select(State,X2010,X2011,X2012,X2013,X2014,X2015,X2016,X2017,X2018)
+
+
+
+```
+
+***
+* Collapsing the wide table into longer table
+ 
+```{r}
+subset_db_2<-gather(subset_db_1,"Year","Count",-State)
+
+
+```
+***
+* Removing the X from year values
+ 
+```{r}
+subset_db_2$Year<-str_replace_all(subset_db_2$Year,"X","")
+
+
+```
+#### Tidy DataSet
+***
+ 
+```{r}
+
+head(subset_db_2)
+
+```
+
+### Analysis {.tabset .tabset-fade .tabset.-pills}
+***
+* Aggregating at U.S National level 
+```{r}
+subset_db_US<-subset_db_2 %>% select(State,Year,"Count") %>% filter(State=='United States') %>% group_by(State,Year) %>% summarise(Total = sum(as.numeric(Count)))
+
+
+
+```
+*Bar Plot showing U.S Population over the period of time from 2010
+
+```{r}
+barplot(subset_db_US$Total,names.arg = subset_db_US$Year,xlab = "Years",ylab = "Population #",main= "U.S National Population from 2010" ,border="red", density=c(90, 70, 50, 40, 30, 20, 10))
+
+```
+
+*Segmentation of U.S regions by population count
+
+```{r}
+subset_db_Regions <- subset_db_2 %>% select(State,Year,"Count") %>% filter (State %in% c('Northeast','South','West','Midwest') & Year==2018) %>% group_by(State) %>% summarise(Total = sum(as.numeric(Count)))
+subset_db_Regions
+
+
+
+
+```
+
+Conclusion:
+
+U.S National population is increasing year over year from 2010 to 2018 and Southern region has more population in 2018 compared to other regions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

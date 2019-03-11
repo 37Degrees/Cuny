@@ -1,0 +1,160 @@
+---
+title: "Project 1- Data Cleansing & Analysis DataSet 1
+"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: show
+   
+   
+    
+
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+***
+### Overview {.tabset .tabset-fade .tabset.-pills}
+The dataset provided contains student information on 395 students including their grades in the class.
+
+
+
+***
+#### R Packages Used
+
+This assignment was accomplished by utilizing these packages for both data analysis and visualizations.
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+library("tidyr")
+library("dplyr")
+library("kableExtra")
+library("ggplot2")
+library("stringr")
+library("lubridate")
+
+
+
+```
+***
+#### The DataSet
+
+The data is captured in the .csv format and updated into GitHub. You will see below that the data is not in a very clean form to conduct analysis easily, therefore this data set needed to be tidy.
+
+```{r}
+theURL <- "https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Students.csv"
+RawFile <-data.frame(read.csv(file = theURL,header = TRUE))
+
+#Table Structure
+glimpse(RawFile)
+
+#Top 6 rows of the table
+
+head(RawFile)
+
+```
+***
+
+### Data Manipulation {.tabset .tabset-fade .tabset.-pills}
+The data needs to be cleaned and manipulated for it to be presentable for analysis.
+
+***
+
+#### Cleaning the table
+
+* Transform the data type of some of columns to right data type 
+```{r}
+# Transform the data type of some of columns to right data type
+RawFile$Student.ID <- as.character(RawFile$Student.ID)
+RawFile$Medu <- as.factor(RawFile$Medu)
+RawFile$Fedu <- as.factor(RawFile$Fedu)
+RawFile$nurse_visit <- as.character(RawFile$nurse_visit)
+
+
+```
+
+***
+* Padding the student id to make is 4 digit number 
+```{r}
+
+RawFile$Student.ID <-str_pad(RawFile$Student.ID, width = 4,side="left",pad = "1")
+names(RawFile)[names(RawFile) =='Student.ID'] <- "Student_ID"
+
+
+
+```
+
+***
+* Replace the codes with descriptions 
+```{r}
+RawFile$sex <- str_replace_all(RawFile$sex,"M","Male")
+RawFile$sex <- str_replace_all(RawFile$sex,"F","Female")
+
+
+```
+
+
+***
+* Select the required variables for analysis 
+```{r}
+head(RawFile)
+TidyFile <-RawFile %>% select(Student_ID,sex,Mjob,Fjob,guardian,traveltime,studytime,freetime,absences)
+dim(TidyFile)
+
+```
+
+### Data Analysis {.tabset .tabset-fade .tabset.-pills}
+
+#### Untidy DataSet
+***
+ 
+```{r}
+head(RawFile,10)
+
+
+```
+
+#### Tidy DataSet
+***
+ 
+```{r}
+head(TidyFile,10)
+
+
+```
+
+#### Analysis
+***
+ 
+```{r}
+subset_absence<-TidyFile %>% select(sex,guardian,absences) %>% group_by(sex,guardian) %>% summarise(Total=sum(absences))
+
+barplot(subset_absence$Total)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
