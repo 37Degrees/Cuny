@@ -1,0 +1,64 @@
+<?xml version="1.0" standalone="yes"?>
+<RECORDS>
+	<RECORD>
+		<Title Key>1001</Title Key>
+		<Title>An Introduction to Statistical Learning: with Applications in R</Title>
+		<Authors>Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani</Authors>
+		<Year of Publication>2017</Year of Publication>
+		<Format>Paperback</Format>
+		<ISBN-10>1461471370</ISBN-10>
+		<Average Customer Review>4.8</Average Customer Review>
+		<Language>English</Language>
+	</RECORD>
+	<RECORD>
+		<Title Key>1002</Title Key>
+		<Title>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</Title>
+		<Authors>Hadley Wickham, Garrett Grolemund</Authors>
+		<Year of Publication>2017</Year of Publication>
+		<Format>Kindle</Format>
+		<ISBN-10>1491910399</ISBN-10>
+		<Average Customer Review>4.9</Average Customer Review>
+		<Language>English</Language>
+	</RECORD>
+	<RECORD>
+		<Title Key>1003</Title Key>
+		<Title>Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</Title>
+		<Authors>Foster Provost, Tom Fawcett</Authors>
+		<Year of Publication>2019</Year of Publication>
+		<Format>Paperback</Format>
+		<ISBN-10>1449361323</ISBN-10>
+		<Average Customer Review>4.4</Average Customer Review>
+		<Language>English</Language>
+	</RECORD>
+	<RECORD>
+		<Title Key>1004</Title Key>
+		<Title>The Big Book of Dashboards: Visualizing Your Data Using Real-World Business Scenarios</Title>
+		<Authors>Steve Wexler, Jeffrey Shaffer, Andy Cotgreave</Authors>
+		<Year of Publication>2017</Year of Publication>
+		<Format>Paperback</Format>
+		<ISBN-10>1119282713</ISBN-10>
+		<Average Customer Review>4.4</Average Customer Review>
+		<Language>English</Language>
+	</RECORD>
+	<RECORD>
+		<Title Key>1005</Title Key>
+		<Title>Introduction to Probability (Chapman &amp; Hall/CRC Texts in Statistical Science)</Title>
+		<Authors>Joseph K. Blitzstein, Jessica Hwang</Authors>
+		<Year of Publication>2014</Year of Publication>
+		<Format>Paperback</Format>
+		<ISBN-10>1466575573</ISBN-10>
+		<Average Customer Review>4.2</Average Customer Review>
+		<Language>English</Language>
+	</RECORD>
+	<RECORD>
+		<Title Key>1007</Title Key>
+		<Title>The 21 Irrefutable Laws of Leadership: Follow Them and People Will Follow You</Title>
+		<Authors>John C. Maxwell, Steven R. Covey </Authors>
+		<Year of Publication>2007</Year of Publication>
+		<Format>Hardcover</Format>
+		<ISBN-10>0785288376</ISBN-10>
+		<Average Customer Review>4.6</Average Customer Review>
+		<Language>English</Language>
+	</RECORD>
+</RECORDS>
+
