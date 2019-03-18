@@ -1,0 +1,212 @@
+---
+title: "Week 7 Assignment- Different File format comparison : HTML,Json, and XML
+"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: show
+    theme: united
+    highlight: tango
+   
+   
+    
+
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+***
+### Overview {.tabset .tabset-fade .tabset.-pills}
+
+
+
+
+***
+#### R Packages Used
+
+This assignment was accomplished by utilizing these packages for both data analysis and visualizations.
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+
+library("dplyr")
+library("RCurl")
+library("XML")
+library("jsonlite")
+library("DT")
+library("kableExtra")
+
+
+
+```
+
+
+***
+### HTML file format {.tabset .tabset-fade .tabset-pills}
+
+Books data is hand written in HTML format and upload on GitHUB [HTML](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Books.html)
+
+#### Overview
+
+Hypertext Markup Language (HTML) is the standard markup language for creating web pages and web applications. With Cascading Style Sheets (CSS) and JavaScript, it forms a triad of cornerstone technologies for the World Wide Web.
+
+#### HTML Script Loading
+
+```{r}
+HTMLURL <- getURL("https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Books.html")
+HTML_df <-data.frame(readHTMLTable(HTMLURL,header = TRUE,which = 1,stringsAsFactors =FALSE))
+
+#Changing the names of the Data Frame 
+
+names(HTML_df) <- c("Title Key","Title","Authors","Year of Publications","Format","ISBN 10 Code","Average Customer Review","Language")
+
+
+```
+
+#### HTML Output
+
+```{r}
+datatable(HTML_df)
+```
+
+
+
+***
+### Json file Format {.tabset .tabset-fade .tabset-pills}
+
+Books data is hand written in Json format and upload on GitHUB [Json](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Books.json)
+
+#### Overview
+
+In computing, JavaScript Object Notation (JSON)is an open-standard file format that uses human-readable text to transmit data objects consisting of attribute-value pairs and array data types (or any other serializable value). It is a very common data format used for asynchronous browser-server communication, including as a replacement for XML in some AJAX-style systems
+
+#### Json Script Loading
+
+```{r}
+JsonURL <- getURL("https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Books.json")
+Json_df <- data.frame(fromJSON(JsonURL))
+
+#Changing the names of the Data Frame 
+
+names(Json_df) <- c("Title Key","Title","Authors","Year of Publications","Format","ISBN 10 Code","Average Customer Review","Language")
+
+
+```
+
+#### Json Output
+
+```{r}
+datatable(Json_df)
+```
+
+***
+### XML file Format {.tabset .tabset-fade .tabset-pills}
+
+Books data is hand written in XML format and upload on GitHUB [Xml](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Books.xml)
+
+#### Overview
+
+Extensible Markup Language (XML) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable. The W3C's XML 1.0 Specification and several other related specifications-all of them free open standards-define XML.
+
+The design goals of XML emphasize simplicity, generality, and usability across the Internet. It is a textual data format with strong support via Unicode for different human languages. Although the design of XML focuses on documents, the language is widely used for the representation of arbitrary data structures[6] such as those used in web services.
+
+#### Xml Script Loading
+
+```{r}
+XMLURL <- getURL("https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/Books.xml")
+XML_df <- data.frame(xmlToDataFrame(XMLURL,stringsAsFactors = FALSE))
+
+#Changing the names of the Data Frame 
+
+names(XML_df) <- c("Title Key","Title","Authors","Year of Publications","Format","ISBN 10 Code","Average Customer Review","Language")
+
+
+```
+
+#### XML Output
+
+```{r}
+datatable(XML_df)
+```
+
+
+###Comparison {.tabset .tabset-fade .tabset-pills}
+
+#### Method 1: 
+
+
+Data Frame output comparison
+
+***
+```{r}
+# Comparing HTML and XML; Are they Identical?
+
+identical(HTML_df,XML_df)
+
+# Comparing HTML and Json; Are they Identical?
+
+identical(HTML_df,Json_df)
+
+# Comparing Json and XML; Are they Identical?
+
+identical(Json_df,XML_df)
+
+
+```
+
+
+
+
+
+
+
+
+#### Method 2: 
+
+merge Data Frames
+
+
+***
+
+Merging the Data frames with merge function. If there is any mismatch found in any pair of the data frame it will be replaced by NA
+
+```{r}
+set1<- merge(HTML_df,XML_df,all=TRUE)
+FinalSet<- merge(set1,XML_df,all=TRUE)
+# This will give if there is any NA found in the final merge of all 3 data frame, if there is a NA then it means there is a mismatch
+any(is.na(FinalSet))
+datatable(FinalSet)
+```
+
+#### Conclusion
+1 All the 3 file formats gives the same output.
+2 HTML is case sensitive where as XML and Json are case sensitive.
+3 File load time is descending order is Json > XML > HTML.
+4 All 3 file formats have different structure. 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
