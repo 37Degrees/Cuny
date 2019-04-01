@@ -1,0 +1,157 @@
+---
+title: "Week 9 Assignment- New York Times API
+"
+author: Arun Reddy
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: show
+    theme: united
+    highlight: tango
+   
+   
+    
+
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+***
+### Overview {.tabset .tabset-fade .tabset.-pills}
+[The New York Times web site](http://developer.nytimes.com/docs) provides a rich set of APIs.
+The topic I have selected is Machine learning Article search API to look up articles by keywords. The results are refined by fitlers and facets.
+The goal is to use New York Times API and fetch the data with certain parameters and converting the fetched data into " R Data frame"
+
+
+***
+#### R Packages Used
+
+This assignment was accomplished by utilizing these packages for both data analysis and visualizations.
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+
+library("dplyr")
+library("XML")
+library("jsonlite")
+library("ggplot2")
+library("DT")
+library("kableExtra")
+
+
+
+```
+
+
+***
+### New York Times API {.tabset .tabset-fade .tabset-pills}
+
+The data collected from New York Times articles are related to Machine Learning published from 01/01/2019 and 03/31/2019.
+
+#### Fetching the Data
+
+ The Data is fetched using API key regitered with NYT develpers site. The base url contains different parameters.
+ 
+```{r}
+
+# Let's set some parameters
+term <- "machine+learning" # Need to use + to string together separate words
+begin_date <- "20190101"
+end_date <- "20190331"
+api_key<-"9QjNM7qvbsLVAAErpgHwklHMWUhpbEIG"
+
+base_url <- paste0("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=",term,
+                  "&begin_date=",begin_date,"&end_date=",end_date,
+                  "&facet_filter=true&api-key=",api_key, sep="")
+
+
+base_query <- fromJSON(base_url)
+
+# Maximum pages with selected parameters
+
+maxPages<-round(base_query$response$meta$hits[1]/10-1)
+
+# Fetching the data based on the number of pages in R Data Frame
+
+pages <- list()
+for(i in 0:maxPages){
+  nyt_search <- fromJSON(paste0(base_url, "&page=", i), flatten = TRUE) %>% data.frame() 
+  message("Retrieving page ", i)
+  pages[[i+1]] <- nyt_search 
+  Sys.sleep(6) 
+}
+
+
+
+
+```
+#### Final output
+ 
+```{r}
+
+all_NYT_Articles <- rbind_pages(pages)
+
+# column names
+
+names(all_NYT_Articles)
+
+# Subsetting and filtering the data
+
+ML_articles<- all_NYT_Articles %>% filter(response.docs.document_type=="article") %>% 
+  select(response.docs.uri,response.docs.source,response.docs.subsection_name,response.docs.type_of_material,response.docs.pub_date,response.docs.word_count)
+
+# Data frame
+datatable(ML_articles)
+
+
+```
+
+### Analysis & Conclusion {.tabset .tabset-fade .tabset-pills}
+
+#### Count of ML Articles
+```{r}
+
+
+df_ml<- ML_articles %>% filter(response.docs.source=='The New York Times') %>% group_by(response.docs.type_of_material) %>% summarise(Total.Count=sum(response.docs.word_count))
+
+ggplot(data=df_ml, aes(x=reorder( response.docs.type_of_material,Total.Count), y=Total.Count)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  xlab("Type of Material")+
+    theme_minimal()
+
+
+```
+
+#### Conclusion
+
+The number of articles published in New York Times are greater compared to other material type.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
