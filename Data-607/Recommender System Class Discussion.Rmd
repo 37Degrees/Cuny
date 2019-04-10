@@ -1,0 +1,78 @@
+---
+title: "Linkedin Recommender System - Class Dicussion"
+author: "Arun Reddy"
+date: "April 9, 2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: show
+    theme: united
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+***
+### Scenario Design Analysis {.tabset .tabset-fade .tabset.-pills}
+
+On Aug. 15, 2016, the Machine Learning Algorithm team at LinkedIn gave a hands-on tutorial on how to build recommender systems using our recently open-sourced machine learning library Photon ML at the KDD conference. We were excited to see a large crowd that could not fit into the room gathered to learn this topic and the strong interest in the data mining community in tools and practical guidance on building recommender systems.
+
+Recommendation systems have become ubiquitous for web applications. Because each member's preferences are very different, providing personalized recommendations is key to the success of such systems. To achieve this goal at scale, using machine-learned models to estimate user preference from user feedback data is essential. Providing an easy-to-use and flexible machine learning library for practitioners to build personalization models is the key to productivity, agility, and developer happiness.
+
+#### Who are the target audience?
+
+There is no social network more catered to business professionals than LinkedIn. Whether you're a recruiter looking for top notch prospects, a content creator looking to publish an article, or a marketer hoping to reach the most valuable audience, LinkedIn is a powerful platform.
+Every month, approximately 106 million users log on and engage with content they find on the site. This doesn't even account for the 414 million total users of LinkedIn.
+
+So the target audience ranging from folks 
+
+1. Who are intersted making network connections.
+2. Who are interested exploring the career paths.
+3. Who are intersted in showcasing their work, publications, shows and conferences to outside world.
+4. Who wanted to follow the news feed from a particular company or a group or a individual.
+5. Who are interested doing the talent hunt.
+
+#### What are their key goals?
+
+The key goals for Linkedin Recommender systems are
+
+1. To create a platform for job seekers and talent hunters which makes the communication easy with their clients.
+2. strenghthen then network connections for a given indidual or a group or a organization.
+3. To create a ground where people can showcase their work, publications, shows and conferences to outside world.
+4. Cross sell the training videos from lynda.com
+
+#### Goals accompolishment?
+
+Goals can be reached with the following steps
+
+1. Make a search functionality within the site more user friendly, so that people can search the site based on the category like by job, people or   Content.
+2. Show the right and personalized content to the user on their linkedin page.
+3. Show the Company profiles which the user might be interested.
+4. Show the recommended feed which includes people to follow, companies or technology to follow through news feed.
+
+### Reverse Engineering {.tabset .tabset-fade .tabset.-pills}
+
+Photon ML is a machine learning library based on Apache Spark. It was originally developed by the LinkedIn Machine Learning Algorithms Team. Currently, Photon ML supports training different types of Generalized Linear Models(GLMs) and Generalized Linear Mixed Models(GLMMs/GLMix model): logistic, linear, and Poisson.
+
+![Linkedin Recommendation sample](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20Recommender1.jpg)
+ A recommender system recommends items to users to optimize a or a few objectives.
+ 
+ The recommender algorithm should be based on user features, behavior, Item features like shown in the below images.
+ 
+ ![Know your items, your users and their interactions](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures.jpg)
+ 
+  ![Know your items, your users and their interactions](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures1.jpg)
+ 
+ 
+  ![Experiment learn innovate](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures2.jpg)
+  
+  
+  ![Experiment learn innovate](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures3.jpg)
+  
+  ![Feature Generation](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures4.jpg)
+![Online Ranking](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures5.jpg)
+
+![Online A/B Experient](https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Images/Linkedin%20UserFeatures6.jpg)
