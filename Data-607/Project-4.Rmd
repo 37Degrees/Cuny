@@ -1,0 +1,149 @@
+---
+title: "Project -4 Text Mining"
+author: "Arun Reddy"
+date: "April 14, 2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    Collapsed: false
+    code_folding: show
+    theme: flatly
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+This is project is about demonstration of text classification into spam/ham using the Naive Bayes Machine Learning model.
+The dataset is collected from SMS spam collection from [UCI Machine Learning Repository]("https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection")
+The dataset is segregated into two categories one is spam and other is ham. 
+We will be using 80% of the dataset as a training set and rest as test set.
+# Import Libraries
+
+
+```{r message=FALSE, warning=FALSE,paged.print=FALSE}
+library(tm)
+library(SnowballC)
+#library(wordcloud)
+library(RColorBrewer)
+library(e1071) # for Naive Bayes
+library(caret) # for Confusion Matrix
+```
+
+
+# Data Import and Exploration
+
+## Data Import
+
+```{r message= FALSE}
+# Import data
+sms_raw<- read.csv("https://raw.githubusercontent.com/DataScienceAR/Cuny-Assignments/master/Data-607/Data-Sets/SpamHamText.csv")
+head(sms_raw)
+
+
+```
+
+## Data Cleansing
+
+### Subsetting the columns and rename the columns
+
+```{r}
+
+sms_raw <- sms_raw[, 1:2] # Fist column gives whether the observation is spam or ham and second column is the actual message
+colnames(sms_raw) <- c("Tag", "Msg")
+```
+
+### Dataset breakdown by categories
+
+```{r}
+# Number of rows and columns
+dim(sms_raw)
+
+# Number or % of Spam and Ham messages
+table(sms_raw$Tag)
+prop.table(table(sms_raw$Tag))
+
+```
+
+#### Data processing
+
+```{r}
+sms_corpus <- VCorpus(VectorSource(sms_raw$Msg))
+
+sms_dtm <- DocumentTermMatrix(sms_corpus, control = 
+                                 list(tolower = TRUE,
+                                      removeNumbers = TRUE,
+                                      stopwords = TRUE,
+                                      removePunctuation = TRUE,
+                                      stemming = TRUE))
+
+dim(sms_dtm)
+```
+
+#### Creating Training and Test Data
+
+```{r}
+#Training & Test set
+sms_dtm_train <- sms_dtm[1:4457, ]
+sms_dtm_test <- sms_dtm[4458:5572, ]
+
+#Training & Test Label
+sms_train_labels <- sms_raw[1:4457, ]$Tag
+sms_test_labels <- sms_raw[4458:5572, ]$Tag
+
+#Proportion for training & test labels
+prop.table(table(sms_train_labels))
+
+prop.table(table(sms_test_labels))
+
+threshold <- 0.1
+
+min_freq = round(sms_dtm$nrow*(threshold/100),0)
+
+min_freq
+# Create vector of most frequent words
+freq_words <- findFreqTerms(x = sms_dtm, lowfreq = min_freq)
+
+
+#Filter the DTM
+sms_dtm_freq_train <- sms_dtm_train[ , freq_words]
+sms_dtm_freq_test <- sms_dtm_test[ , freq_words]
+
+dim(sms_dtm_freq_train)
+
+convert_values <- function(x) {
+  x <- ifelse(x > 0, "Yes", "No")
+}
+
+sms_train <- apply(sms_dtm_freq_train, MARGIN = 2,
+                   convert_values)
+sms_test <- apply(sms_dtm_freq_test, MARGIN = 2,
+                  convert_values)
+
+```
+
+# Naive Bayes Model Training
+
+```{r}
+#Create model from the training dataset
+sms_classifier <- naiveBayes(sms_train, sms_train_labels)
+
+#Make predictions on test set
+sms_test_pred <- predict(sms_classifier, sms_test)
+
+#Create confusion matrix
+confusionMatrix(data = sms_test_pred, reference = sms_test_labels,
+                positive = "spam", dnn = c("Prediction", "Actual"))
+```
+
+#Conclusion
+
+We see that the model translated 5 spam messages as ham. The model is shows the accurancy of 98.12%.
+
+
+
+
